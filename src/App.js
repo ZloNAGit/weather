@@ -1,7 +1,7 @@
-function App() {
+import LandingPage from './LandingPage.js'
+
+export default function App() {
   return (
-    <h1>Weather</h1>
+    <LandingPage />
   );
 }
-
-export default App;
