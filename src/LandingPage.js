@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react"
+import Search from './Search.js'
 const { OPEN_WEATHER_KEY } = require("./config.js");
 
 export default function LandingPage() {
   const [weather, updateWeather] = useState()
   const [city, updateCity] = useState("Tampa")
-  const [state, updateState] = useState("Florida")
 
-  async function getData(city, state) {
-    const [lat, long] = await getLocation(city, state)
+  async function getData(city) {
+    const [lat, long] = await getLocation(city)
     getWeather(lat, long)
   }
 
-  async function getLocation(city, state) {
-    const query = `${city},${state},US`
+  async function getLocation(city) {
     const limit = 1
     const key = OPEN_WEATHER_KEY
+    const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=${limit}&appid=${key}`
 
-    const url = `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=${limit}&appid=${key}`
     const response = await fetch(url)
     if (response.ok) {
       const data = await response.json()
@@ -39,10 +38,10 @@ export default function LandingPage() {
   }
 
   useEffect(() => {
-    getData(city, state)
-  }, [city, state])
+    getData(city)
+  }, [city])
 
   return (
-    <div> Placeholder </div>
+    <Search updateCity={updateCity}/>
   );
 }
