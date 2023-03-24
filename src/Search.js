@@ -17,7 +17,7 @@ export default function Search({updateCity}) {
     <form onSubmit={handleSubmit}>
       <div className="input-group mb-3">
         <input onChange={handleChange} value={value} className="form-control" placeholder="Search By City" required type="text" name="weather" id="weather" />
-        <button type="button" className="btn btn-outline-dark">Search Weather</button>
+        <button type="button" className="btn btn-light btn-outline-dark">Search Weather</button>
       </div>
     </form>
   )
