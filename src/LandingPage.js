@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react"
 import Search from './Search.js'
 import CurrentCard from './CurrentCard.js'
+import ForecastCard from './ForecastCard.js'
 const { OPEN_WEATHER_KEY } = require("./config.js");
 
 export default function LandingPage() {
-  const [weather, updateWeather] = useState({})
+  const [weather, updateWeather] = useState()
   const [forecast, updateForecast] = useState([])
   const [city, updateCity] = useState("Tampa")
 
@@ -47,7 +48,50 @@ export default function LandingPage() {
     const response = await fetch(url)
     if (response.ok) {
       const data = await response.json()
-      updateForecast(data.list)
+
+      const forecastList = []
+      const today = new Date().getDay()
+
+      const days = new Array(7)
+      for (let i = 0; i < days.length; i++) {
+        days[i] = []
+      }
+
+      // Sort data by day
+      for (let i = 0; i < data.list.length; i++) {
+        const currentForecastDay = new Date(data.list[i].dt_txt).getDay()
+        if (currentForecastDay === today) continue
+
+        days[currentForecastDay].push(data.list[i])
+      }
+
+      // Build individual daily forecast
+      const daysAsIndex = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+      for (let i = 0; i < days.length; i++) {
+        if (days[i].length === 0) {
+          forecastList.push({})
+          continue
+        }
+
+        const individualForecast = {
+          day: daysAsIndex[i],
+          weather: days[i][0].weather[0].main,
+          high: -Infinity,
+          low: Infinity,
+        }
+
+        for (let j = 0; j < days[i].length; j++) {
+          if (individualForecast["high"] < days[i][j].main.temp_max) individualForecast["high"] = days[i][j].main.temp_max
+          if (individualForecast["low"] > days[i][j].main.temp_min) individualForecast["low"] = days[i][j].main.temp_min
+        }
+
+        forecastList.push(individualForecast)
+      }
+
+      // Sort forecast into appropriate daily order
+      const sortedForecast = forecastList.slice(today).concat(forecastList.slice(0,today))
+
+      updateForecast(sortedForecast)
     }
   }
 
@@ -60,16 +104,14 @@ export default function LandingPage() {
       <Search updateCity={updateCity}/>
       <h1>Current Weather</h1>
       <CurrentCard weather={weather}/>
-      <table>
-        <thead>
-          <tr>
-            <th>Placeholder</th>
-          </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-      </table>
+      <h2>Forecast</h2>
+      <div>
+        {forecast.length === 0 ? null : forecast.map(day => {
+          return (
+            <ForecastCard weather={day}/>
+          )
+        })}
+      </div>
     </>
   );
 }
