@@ -6,6 +6,7 @@ export default function Search({updateCity}) {
   function handleSubmit(event) {
     event.preventDefault()
     updateCity(value)
+    updateValue("")
   }
 
   async function handleChange(event) {
