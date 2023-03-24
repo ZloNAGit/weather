@@ -5,8 +5,8 @@ export default function ForecastCard({weather}) {
     return null
   }
   return (
-    <div>
-      <h2>{weather.day} - {weather.weather}</h2>
+    <div className="card text-center col">
+      <h4>{weather.day} - {weather.weather}</h4>
       <div>
         <div>High - {Math.round(weather.high)}°</div>
         <div>Low - {Math.round(weather.low)}°</div>

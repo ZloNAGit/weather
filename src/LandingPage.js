@@ -7,7 +7,7 @@ const { OPEN_WEATHER_KEY } = require("./config.js");
 export default function LandingPage() {
   const [weather, updateWeather] = useState()
   const [forecast, updateForecast] = useState([])
-  const [city, updateCity] = useState("Tampa")
+  const [city, updateCity] = useState()
 
   async function getData(city) {
     const [lat, long] = await getLocation(city)
@@ -100,18 +100,24 @@ export default function LandingPage() {
   }, [city])
 
   return (
-    <>
+    <div>
       <Search updateCity={updateCity}/>
-      <h1>Current Weather</h1>
-      <CurrentCard weather={weather}/>
-      <h2>Forecast</h2>
-      <div>
-        {forecast.length === 0 ? null : forecast.map(day => {
-          return (
-            <ForecastCard weather={day}/>
-          )
-        })}
-      </div>
-    </>
+      <h1 className="text-center">Weather App</h1>
+      {!city ?
+        <div className="text-center">To Begin, Please Enter a City Above</div>
+      :
+        <div className="position-relative">
+          <CurrentCard weather={weather}/>
+          <h3 className="text-center">Forecast</h3>
+          <div className="row align-items-start">
+            {forecast.length === 0 ? null : forecast.map(day => {
+              return (
+                <ForecastCard weather={day}/>
+              )
+            })}
+          </div>
+        </div>
+      }
+    </div>
   );
 }
