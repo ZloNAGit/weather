@@ -78,6 +78,7 @@ export default function LandingPage() {
           weather: days[i][0].weather[0].main,
           high: -Infinity,
           low: Infinity,
+          id: days[i][0].dt
         }
 
         for (let j = 0; j < days[i].length; j++) {
@@ -96,7 +97,9 @@ export default function LandingPage() {
   }
 
   useEffect(() => {
-    getData(city)
+    if (city) {
+      getData(city)
+    }
   }, [city])
 
   return (
@@ -112,7 +115,7 @@ export default function LandingPage() {
           <div className="row align-items-start">
             {forecast.length === 0 ? null : forecast.map(day => {
               return (
-                <ForecastCard weather={day}/>
+                <ForecastCard key={day.id} weather={day}/>
               )
             })}
           </div>
