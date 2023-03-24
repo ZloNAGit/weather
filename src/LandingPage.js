@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react"
 import Search from './Search.js'
+import CurrentCard from './CurrentCard.js'
 const { OPEN_WEATHER_KEY } = require("./config.js");
 
 export default function LandingPage() {
-  const [weather, updateWeather] = useState()
+  const [weather, updateWeather] = useState({})
+  const [forecast, updateForecast] = useState([])
   const [city, updateCity] = useState("Tampa")
 
   async function getData(city) {
     const [lat, long] = await getLocation(city)
     getWeather(lat, long)
+    getForecast(lat, long)
   }
 
   async function getLocation(city) {
@@ -33,7 +36,18 @@ export default function LandingPage() {
     const response = await fetch(url)
     if (response.ok) {
       const data = await response.json()
-      console.log("weather data: ", data)
+      updateWeather(data)
+    }
+  }
+
+  async function getForecast(lat, long) {
+    const key = OPEN_WEATHER_KEY
+
+    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&appid=${key}&units=imperial`
+    const response = await fetch(url)
+    if (response.ok) {
+      const data = await response.json()
+      updateForecast(data.list)
     }
   }
 
@@ -42,6 +56,20 @@ export default function LandingPage() {
   }, [city])
 
   return (
-    <Search updateCity={updateCity}/>
+    <>
+      <Search updateCity={updateCity}/>
+      <h1>Current Weather</h1>
+      <CurrentCard weather={weather}/>
+      <table>
+        <thead>
+          <tr>
+            <th>Placeholder</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+      </table>
+    </>
   );
 }
